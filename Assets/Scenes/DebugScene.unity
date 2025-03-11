@@ -369,7 +369,6 @@ GameObject:
   - component: {fileID: 692428864}
   - component: {fileID: 692428863}
   - component: {fileID: 692428862}
-  - component: {fileID: 692428861}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -377,19 +376,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &692428861
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692428860}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f20ef0b376a15234cabe6f1ac86eeb2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  image: {fileID: 1379682263}
 --- !u!114 &692428862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -515,6 +501,7 @@ GameObject:
   - component: {fileID: 1379682266}
   - component: {fileID: 1379682265}
   - component: {fileID: 1379682264}
+  - component: {fileID: 1379682267}
   m_Layer: 5
   m_Name: Aim
   m_TagString: Untagged
@@ -579,6 +566,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 5, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1379682267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379682263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f20ef0b376a15234cabe6f1ac86eeb2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimInactiveSize: 4
+  aimActiveSize: 5
+  aimInactiveAlpha: 0.3
+  aimActiveAlpha: 1
 --- !u!1 &1408115344
 GameObject:
   m_ObjectHideFlags: 0
@@ -820,8 +823,9 @@ GameObject:
   - component: {fileID: 1738480818}
   - component: {fileID: 1738480817}
   - component: {fileID: 1738480816}
-  - component: {fileID: 1738480815}
   - component: {fileID: 1738480819}
+  - component: {fileID: 1738480815}
+  - component: {fileID: 1738480820}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -930,6 +934,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a54ef68ebf82084489042b1cb6f414c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &1738480820
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1738480814}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &2077474049
 PrefabInstance:
   m_ObjectHideFlags: 0
