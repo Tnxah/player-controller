@@ -31,7 +31,8 @@ public class PlayerInteraction : MonoBehaviour
 
         if (interactable != null) 
         {
-            interactable.Interact();
+            IInteractionBehaviour behavior = interactable.GetInteractionBehaviour();
+            behavior.Interact();
         }
     }
 
@@ -39,7 +40,9 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (interactable != null)
         {
-            interactable.EndInteraction();
+            IInteractionBehaviour behavior = interactable.GetInteractionBehaviour();
+            behavior.EndInteraction();
+
             interactable = null;
         }
     }

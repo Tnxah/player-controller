@@ -6,7 +6,7 @@ public class PlayerControlManager : MonoBehaviour
 
     [SerializeField] private PlayerRotation PlayerRotation;
     [SerializeField] private PlayerMovement PlayerMovement;
-    [SerializeField] private PlayerInteraction PlayerHold;
+    [SerializeField] private PlayerInteraction PlayerInteraction;
 
     private void Awake()
     {
@@ -14,7 +14,7 @@ public class PlayerControlManager : MonoBehaviour
 
         PlayerMovement.Initialize(PlayerControls);
         PlayerRotation.Initialize(PlayerControls);
-        PlayerHold.Initialize(PlayerControls);
+        PlayerInteraction.Initialize(PlayerControls);
     }
 
     private void OnEnable()
@@ -26,6 +26,4 @@ public class PlayerControlManager : MonoBehaviour
     {
         PlayerControls.Disable();
     }
-
-    public Transform GetHeldObject() => PlayerHold.interactingObject;
 }
