@@ -7,13 +7,19 @@ public class PlayerInteraction : MonoBehaviour
     private IInteractor interactor;
     private IInteractable interactable;
     private InteractorContext interactorContext;
+    private InteractionDetector interactionDetector;
 
     [Header("Raycast Interactor settings")]
     [SerializeField] private float interactionDistance = 3.5f;
 
+    [Header("Interaction Detection settings")]
+    [SerializeField] private float detectionDelaySeconds = 0.1f;
+
     public void Initialize(PlayerControls inputActions)
     {
         this.inputActions = inputActions;
+        interactionDetector = gameObject.AddComponent<InteractionDetector>();
+
         InitializeRaycastInteractor();
 
         SubscribeToInputActions();
@@ -23,6 +29,8 @@ public class PlayerInteraction : MonoBehaviour
     {
         interactor = new RaycastInteractor();
         interactorContext = new RaycastInteractorContext(Camera.main.transform, interactionDistance);
+
+        interactionDetector.Initialize(interactor, interactorContext, detectionDelaySeconds);
     }
 
     private void Interact()

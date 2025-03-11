@@ -5,36 +5,49 @@ public class InteractionDetector : MonoBehaviour
 {
     private IInteractor interactor;
     private InteractorContext interactorContext;
+    private float detectionDelaySeconds;
 
     private bool detect;
 
-    public void Initialize(IInteractor interactor, InteractorContext interactorContext)
+    public void Initialize(IInteractor interactor, InteractorContext interactorContext, float detectionDelaySeconds)
     {
         this.interactor = interactor;
         this.interactorContext = interactorContext;
+        this.detectionDelaySeconds = detectionDelaySeconds;
 
         StartDetection();
     }
 
     private void StartDetection()
     {
+        detect = true;
         StartCoroutine(DetectInteraction());
+    }
+
+    private void StopDetection()
+    {
+        detect = false;
     }
 
     private IEnumerator DetectInteraction()
     {
         while (detect)
         {
-            if (interactor.TryInteract(interactorContext) != null)
-            {
-                Debug.Log("Fire detected event");
-            }
-            else
-            {
-                Debug.Log("Fire undetected event");
-            }
+            var interactable = interactor.TryInteract(interactorContext);
 
-            yield return new WaitForSeconds(0.2f);
+            EventBus.Publish(new InteractionDetectionEvent { Interactable = interactable });
+            
+            yield return new WaitForSeconds(detectionDelaySeconds);
         }
     }
+
+    private void OnDisable()
+    {
+        StopDetection();
+    }
+}
+
+public class InteractionDetectionEvent
+{
+    public IInteractable Interactable { get; set; }
 }
