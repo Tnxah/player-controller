@@ -25,7 +25,7 @@ public class PlayerInteraction : MonoBehaviour
         SubscribeToInputActions();
     }
 
-    private void InitializeRaycastInteractor()
+    private void InitializeRaycastInteractor() //TODO: Maybe can be simplified? Without manual preparations.
     {
         interactor = new RaycastInteractor();
         interactorContext = new RaycastInteractorContext(Camera.main.transform, interactionDistance);
@@ -39,8 +39,7 @@ public class PlayerInteraction : MonoBehaviour
 
         if (interactable != null) 
         {
-            IInteractionBehaviour behavior = interactable.GetInteractionBehaviour();
-            behavior.Interact();
+            EventBus.Publish(new InteractEvent { Interactable = interactable });
         }
     }
 
@@ -48,8 +47,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (interactable != null)
         {
-            IInteractionBehaviour behavior = interactable.GetInteractionBehaviour();
-            behavior.EndInteraction();
+            EventBus.Publish(new InteractEvent { Interactable = interactable }); //TODO: Should be separate event (OnEndInteractionEvent)
 
             interactable = null;
         }
@@ -71,4 +69,9 @@ public class PlayerInteraction : MonoBehaviour
     {
         UnsubscribeFromInputActions();
     }
+}
+
+public class InteractEvent
+{
+    public IInteractable Interactable { get; set; }
 }
