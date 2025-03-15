@@ -1,5 +1,5 @@
 using UnityEngine;
-public class HoldableInteractionBehaviour : MonoBehaviour, IInteractableBehaviour //TODO: Not sure if it should be MonoBehaviour
+public class HoldableInteractionBehaviour : MonoBehaviour, IInteractableBehaviour
 {
     private Transform instance; 
     private Transform holdPoint;
@@ -8,9 +8,9 @@ public class HoldableInteractionBehaviour : MonoBehaviour, IInteractableBehaviou
     private float springConstant = 60f;
     private float dampingFactor = 9f;
 
-    public void Init(Rigidbody rb)
+    private void Awake()
     {
-        this.rb = rb;
+        rb = GetComponent<Rigidbody>();
     }
 
     public void Interact(InteractableBehaviourContext ctx)
@@ -37,8 +37,7 @@ public class HoldableInteractionBehaviour : MonoBehaviour, IInteractableBehaviou
 
         if (displacement.magnitude > 7f)
         {
-            if (displacement.magnitude < 10f)
-                EndInteraction();
+            EndInteraction();
         }
 
         Vector3 springForce = -springConstant * displacement;
@@ -47,9 +46,10 @@ public class HoldableInteractionBehaviour : MonoBehaviour, IInteractableBehaviou
         rb.AddForce(springForce + dampingForce, ForceMode.Force);
     }
 
-    private void FixedUpdate() //TODO: I think it should be Coroutine
+    private void FixedUpdate()
     {
-        if(holdPoint)Follow();
+        if(holdPoint)
+            Follow();
     }
 }
 

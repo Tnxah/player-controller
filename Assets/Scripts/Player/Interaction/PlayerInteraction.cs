@@ -37,7 +37,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         interactable = interactor.TryInteract(interactorContext);
 
-        if (interactable != null) 
+        if (interactable != null)
         {
             EventBus.Publish(new InteractEvent { Interactable = interactable });
         }
@@ -47,7 +47,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (interactable != null)
         {
-            EventBus.Publish(new InteractEvent { Interactable = interactable }); //TODO: Should be separate event (OnEndInteractionEvent)
+            EventBus.Publish(new EndInteractionEvent { Interactable = interactable });
 
             interactable = null;
         }
@@ -72,6 +72,11 @@ public class PlayerInteraction : MonoBehaviour
 }
 
 public class InteractEvent
+{
+    public IInteractable Interactable { get; set; }
+}
+
+public class EndInteractionEvent
 {
     public IInteractable Interactable { get; set; }
 }

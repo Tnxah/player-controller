@@ -1,48 +1,46 @@
 using UnityEngine;
 
-public class HoldInteractionHandler : MonoBehaviour
+public class PerformInteractionHandler : MonoBehaviour
 {
-    [SerializeField] private Transform holdPoint;
-
-    private HoldableInteractionBehaviour holdable;
-    private HoldInteractionBehaviourContext holdInteractionBehaviourContext;
+    private PerformableInteractionBehaviour performable;
+    private InteractableBehaviourContext interactableBehaviourContext;
 
     private void Awake()
     {
-        holdInteractionBehaviourContext = new HoldInteractionBehaviourContext(holdPoint);
+        interactableBehaviourContext = new InteractableBehaviourContext();
     }
 
     private void OnInteract(InteractEvent evt)
     {
         var behaviour = evt.Interactable.GetInteractionBehaviour();
 
-        if (behaviour is not HoldableInteractionBehaviour holdableBehaviour) 
+        if (behaviour is not PerformableInteractionBehaviour performableBehaviour)
         {
             Debug.LogWarning("Not related behavior. Ignored.");
             return;
         }
 
-        if (holdable == null)
+        if (performable == null)
         {
-            holdable = holdableBehaviour;
-            holdable.Interact(holdInteractionBehaviourContext);
+            performable = performableBehaviour;
+            performable.Interact(interactableBehaviourContext);
         }
     }
 
-    private void OnEndInteraction(EndInteractionEvent evt) 
+    private void OnEndInteraction(EndInteractionEvent evt)
     {
         var behaviour = evt.Interactable.GetInteractionBehaviour();
 
-        if (behaviour is not HoldableInteractionBehaviour holdableBehaviour)
+        if (behaviour is not PerformableInteractionBehaviour performableBehaviour)
         {
             Debug.LogWarning("Not related behavior. Ignored.");
             return;
         }
 
-        if (holdable == holdableBehaviour)
+        if (performable == performableBehaviour)
         {
-            holdable.EndInteraction();
-            holdable = null;
+            performable.EndInteraction();
+            performable = null;
         }
     }
 

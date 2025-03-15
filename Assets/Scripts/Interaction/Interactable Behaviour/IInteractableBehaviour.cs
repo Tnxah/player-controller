@@ -4,4 +4,4 @@ public interface IInteractableBehaviour
     public abstract void EndInteraction();
 }
 
-public abstract class InteractableBehaviourContext { }
+public class InteractableBehaviourContext { }

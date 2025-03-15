@@ -2,16 +2,15 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour, IInteractable
 {
-    private HoldableInteractionBehaviour interactionBehaviour; //TODO: No sence if i have instance of concrete behavior instead of IInteractableBehavior
+    private IInteractableBehaviour interactableBehaviour;
 
     private void Awake()
     {
-        interactionBehaviour = gameObject.AddComponent<HoldableInteractionBehaviour>();
-        interactionBehaviour.Init(GetComponent<Rigidbody>());
+        interactableBehaviour = GetComponent<IInteractableBehaviour>();
     }
 
     public IInteractableBehaviour GetInteractionBehaviour()
     {
-        return interactionBehaviour;
+        return interactableBehaviour;
     }
 }
