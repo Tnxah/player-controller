@@ -12,3 +12,7 @@ public class PerformableInteractionBehaviour : MonoBehaviour, IInteractableBehav
         //throw new System.NotImplementedException();
     }
 }
+
+public class PerformableInteractionBehaviourContext : InteractableBehaviourContext
+{
+}

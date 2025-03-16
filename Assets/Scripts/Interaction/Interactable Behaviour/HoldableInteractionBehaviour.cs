@@ -15,7 +15,7 @@ public class HoldableInteractionBehaviour : MonoBehaviour, IInteractableBehaviou
 
     public void Interact(InteractableBehaviourContext ctx)
     {
-        if(ctx is not HoldInteractionBehaviourContext context)
+        if(ctx is not HoldableInteractionBehaviourContext context)
         {
             Debug.LogWarning("Invalid context provided for HoldableInteractionBehaviour.");
             return;
@@ -53,11 +53,11 @@ public class HoldableInteractionBehaviour : MonoBehaviour, IInteractableBehaviou
     }
 }
 
-public class HoldInteractionBehaviourContext : InteractableBehaviourContext
+public class HoldableInteractionBehaviourContext : InteractableBehaviourContext
 {
     public Transform holdPoint { get; }
 
-    public HoldInteractionBehaviourContext(Transform holdPoint)
+    public HoldableInteractionBehaviourContext(Transform holdPoint)
     {
         this.holdPoint = holdPoint;
     }

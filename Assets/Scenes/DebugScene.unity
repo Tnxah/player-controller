@@ -490,11 +490,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1212747984 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 868081489866500383, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
-  m_PrefabInstance: {fileID: 2077474049}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1379682263
 GameObject:
   m_ObjectHideFlags: 0
@@ -838,7 +833,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &1738480815
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -979,36 +974,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d62f7d4e6072d824893abcdba8caf60f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &2068267671 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8778380709325363910, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
-  m_PrefabInstance: {fileID: 2077474049}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2068267672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2068267671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1aeda12ce3d26694392b089da471a69f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  holdPoint: {fileID: 1212747984}
---- !u!114 &2068267680
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2068267671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83d87fb9dd217564184b589644d4ef1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2077474049
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1057,10 +1022,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7613802831090826487, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 128
-      objectReference: {fileID: 0}
     - target: {fileID: 8778380709325363910, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1068,13 +1029,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8778380709325363910, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2068267672}
-    - targetCorrespondingSourceObject: {fileID: 8778380709325363910, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2068267680}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
 --- !u!1 &2092802703
 GameObject:

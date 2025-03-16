@@ -25,7 +25,7 @@ public class PlayerInteraction : MonoBehaviour
         SubscribeToInputActions();
     }
 
-    private void InitializeRaycastInteractor() //TODO: Maybe can be simplified? Without manual preparations.
+    private void InitializeRaycastInteractor()
     {
         interactor = new RaycastInteractor();
         interactorContext = new RaycastInteractorContext(Camera.main.transform, interactionDistance);
