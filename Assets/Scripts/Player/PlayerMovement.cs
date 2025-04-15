@@ -109,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
     private void CheckGrounded()
     {
         var radius = bodyCollider.radius;
-        var spherePosition = transform.position + new Vector3(0f, radius - groundCheckDistance, 0f);
+        var spherePosition = transform.position + Vector3.down * ((bodyCollider.height / 2f) - bodyCollider.radius + groundCheckDistance);
         isGrounded = Physics.CheckSphere(spherePosition, radius, groundMask);
     }
 
@@ -137,7 +137,7 @@ public class PlayerMovement : MonoBehaviour
         if (bodyCollider == null) return;
 
         var radius = bodyCollider.radius;
-        var spherePosition = transform.position + new Vector3(0f, radius - groundCheckDistance, 0f);
+        var spherePosition = transform.position + Vector3.down * ((bodyCollider.height / 2f) - bodyCollider.radius + groundCheckDistance);
 
         Gizmos.color = isGrounded ? Color.green : Color.red;
         Gizmos.DrawWireSphere(spherePosition, radius);
