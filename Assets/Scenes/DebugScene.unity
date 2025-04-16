@@ -151,10 +151,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96d9d9f0261f751449b9653a38f7eb73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraTarget: {fileID: 576870925}
-  positionSmoothing: 50
-  rotationSmoothing: 300
-  offset: {x: 0, y: 0, z: 0}
+  positionSmoothing: 10
+  rotationSmoothing: 15
+  followTarget: {fileID: 576870925}
 --- !u!114 &66351341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -982,13 +981,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3872148537499883438, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
+      propertyPath: cameraFollow
+      value: 
+      objectReference: {fileID: 66351340}
     - target: {fileID: 5389080374498746178, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5389080374498746178, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 5389080374498746178, guid: 45f4abac8221d184f897e63d6273cae8, type: 3}
       propertyPath: m_LocalPosition.z

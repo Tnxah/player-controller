@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1563254079040778833
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2392311656201674129}
+  m_Layer: 0
+  m_Name: Third-person View Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2392311656201674129
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563254079040778833}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.8, z: -3.87}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5389080374498746178}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2220633332125217576
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1883571221780794730}
   m_Layer: 0
-  m_Name: Camera Position
+  m_Name: First-person View Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 2220633332125217576}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.75, z: 0}
+  m_LocalPosition: {x: 0, y: 0.75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -187,6 +218,7 @@ Transform:
   m_Children:
   - {fileID: 3117610856317400597}
   - {fileID: 1883571221780794730}
+  - {fileID: 2392311656201674129}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3252006429700206870
@@ -230,9 +262,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 444577fa97290d748bdab37357d67903, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 20
-  rotationSmoothTime: 0.05
-  cameraPosition: {fileID: 1883571221780794730}
+  mouseSensitivity: 1
+  pitchClamp: 90
+  firstPersonTarget: {fileID: 1883571221780794730}
+  thirdPersonTarget: {fileID: 2392311656201674129}
+  cameraFollow: {fileID: 0}
 --- !u!114 &7613802831090826487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,7 +288,7 @@ MonoBehaviour:
   groundDamping: 7
   airDamping: 0
   decelerationForce: 10
-  groundCheckDistance: 0.15
+  groundCheckDistance: 0.1
   groundMask:
     serializedVersion: 2
     m_Bits: 128

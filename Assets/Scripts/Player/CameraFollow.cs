@@ -2,34 +2,37 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [Header("Follow Settings")]
-    [SerializeField] private Transform cameraTarget;
-    [SerializeField] private float positionSmoothing = 50f;
-    [SerializeField] private float rotationSmoothing = 300f;
-    [SerializeField] private Vector3 offset = Vector3.zero;
+    [Header("Smoothing")]
+    [SerializeField] private float positionSmoothing = 10f;
+    [SerializeField] private float rotationSmoothing = 15f;
 
+    [SerializeField] private Transform followTarget;
+    private Vector3 velocity = Vector3.zero;
+
+    public void SetFollowTarget(Transform target)
+    {
+        followTarget = target;
+    }
 
     private void LateUpdate()
     {
-        if (!cameraTarget) return;
+        if (followTarget == null) return;
 
-        Follow();
-    }
+        // Smooth position
+        transform.position = Vector3.SmoothDamp(
+            transform.position,
+            followTarget.position,
+            ref velocity,
+            1f / positionSmoothing,
+            Mathf.Infinity,
+            Time.deltaTime
+        );
 
-    private void Follow()
-    {
-        var desiredPosition = cameraTarget.position + offset;
-
-        if (transform.position != desiredPosition && Mathf.Abs((desiredPosition - transform.position).magnitude) < 1f)
-        {
-            transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * positionSmoothing);
-        }
-        else
-        {
-            transform.position = desiredPosition;
-        }
-
-        if(transform.rotation != cameraTarget.rotation)
-        transform.rotation = Quaternion.Lerp(transform.rotation, cameraTarget.rotation, Time.deltaTime * rotationSmoothing);
+        // Smooth rotation
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            followTarget.rotation,
+            Time.deltaTime * rotationSmoothing
+        );
     }
 }

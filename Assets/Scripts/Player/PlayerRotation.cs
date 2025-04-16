@@ -1,31 +1,42 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerControlManager))]
 public class PlayerRotation : MonoBehaviour
 {
     [Header("Rotation Settings")]
-    [SerializeField] private float mouseSensitivity = 20f;
-    [SerializeField] private float rotationSmoothTime = 0.05f;
+    [SerializeField] private float mouseSensitivity = 1f;
+    [SerializeField] private float pitchClamp = 90f;
+
+    [Header("View Targets")]
+    [SerializeField] private Transform firstPersonTarget;
+    [SerializeField] private Transform thirdPersonTarget;
 
     [Header("Camera")]
-    [SerializeField] private Transform cameraPosition;
+    [SerializeField] private CameraFollow cameraFollow;
 
     private PlayerControls inputActions;
     private Vector2 lookInput;
-
     private float pitch;
     private float yaw;
-    private float pitchVelocity;
-    private float yawVelocity;
+
+    private bool isThirdPerson; // default to FP
+
+    private void Awake()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        yaw = transform.eulerAngles.y;
+        pitch = firstPersonTarget.localEulerAngles.x;
+    }
 
     public void Initialize(PlayerControls inputActions)
     {
         this.inputActions = inputActions;
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
         SubscribeToInputActions();
+        SetViewMode(isThirdPerson); // Set initial mode
     }
 
     private void LateUpdate()
@@ -35,42 +46,47 @@ public class PlayerRotation : MonoBehaviour
 
     private void ApplyRotation()
     {
-        var mouseX = lookInput.x * mouseSensitivity;
-        var mouseY = lookInput.y * mouseSensitivity;
+        yaw += lookInput.x * mouseSensitivity;
+        pitch -= lookInput.y * mouseSensitivity;
 
-        pitch -= mouseY * Time.deltaTime;
-        yaw += mouseX * Time.deltaTime;
+        pitch = Mathf.Clamp(pitch, -pitchClamp, pitchClamp);
 
-        pitch = Mathf.Clamp(pitch, -90f, 90f);
+        // Apply player yaw rotation (Y-axis)
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
 
-        float smoothedPitch = Mathf.SmoothDampAngle(
-            cameraPosition.localEulerAngles.x,
-            pitch,
-            ref pitchVelocity,
-            rotationSmoothTime
-        );
-
-        float smoothedYaw = Mathf.SmoothDampAngle(
-            transform.eulerAngles.y,
-            yaw,
-            ref yawVelocity,
-            rotationSmoothTime
-        );
-
-        cameraPosition.localRotation = Quaternion.Euler(smoothedPitch, 0f, 0f);
-        transform.rotation = Quaternion.Euler(0f, smoothedYaw, 0f);
+        // Apply camera pitch (X-axis)
+        Transform currentTarget = isThirdPerson ? thirdPersonTarget : firstPersonTarget;
+        currentTarget.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
+
+    private void ToggleView()
+    {
+        isThirdPerson = !isThirdPerson;
+        SetViewMode(isThirdPerson);
+    }
+
+    private void SetViewMode(bool thirdPerson)
+    {
+        cameraFollow.SetFollowTarget(thirdPerson ? thirdPersonTarget : firstPersonTarget);
+    }
+
+    private void OnRotatePerformed(InputAction.CallbackContext ctx) => lookInput = ctx.ReadValue<Vector2>();
+    private void OnRotateCanceled(InputAction.CallbackContext ctx) => lookInput = Vector2.zero;
 
     private void SubscribeToInputActions()
     {
-        inputActions.Player.Rotate.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
-        inputActions.Player.Rotate.canceled += ctx => lookInput = Vector2.zero;
+        inputActions.Player.Rotate.performed += OnRotatePerformed;
+        inputActions.Player.Rotate.canceled += OnRotateCanceled;
+
+        inputActions.Player.ToggleView.performed += ctx => ToggleView();
     }
 
     private void UnsubscribeFromInputActions()
     {
-        inputActions.Player.Rotate.performed -= ctx => lookInput = ctx.ReadValue<Vector2>();
-        inputActions.Player.Rotate.canceled -= ctx => lookInput = Vector2.zero;
+        inputActions.Player.Rotate.performed -= OnRotatePerformed;
+        inputActions.Player.Rotate.canceled -= OnRotateCanceled;
+
+        inputActions.Player.ToggleView.performed -= ctx => ToggleView();
     }
 
     private void OnDisable()
