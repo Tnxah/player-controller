@@ -1,20 +1,24 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerControlManager))]
 public class PlayerRotation : MonoBehaviour
 {
+    private ICameraRotation cameraRotation;
+
     [Header("Rotation Settings")]
     [SerializeField] private float mouseSensitivity = 1f;
-    [SerializeField] private float pitchClamp = 90f;
 
     [Header("View Targets")]
-    [SerializeField] private Transform firstPersonTarget;
-    [SerializeField] private Transform thirdPersonTarget;
+    [SerializeField] private Transform firstPersonTargetPosition;
+    [SerializeField] private Transform thirdPersonTargetPosition;
+    [SerializeField] private Transform cameraTarget;
 
     [Header("Camera")]
     [SerializeField] private CameraFollow cameraFollow;
 
+    private CameraRotationContext context;
     private PlayerControls inputActions;
     private Vector2 lookInput;
     private float pitch;
@@ -26,37 +30,22 @@ public class PlayerRotation : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        yaw = transform.eulerAngles.y;
-        pitch = firstPersonTarget.localEulerAngles.x;
     }
 
     public void Initialize(PlayerControls inputActions)
     {
         this.inputActions = inputActions;
 
+        context = new CameraRotationContext(cameraTarget, transform, firstPersonTargetPosition, thirdPersonTargetPosition);
+
         SubscribeToInputActions();
         SetViewMode(isThirdPerson); // Set initial mode
+        cameraFollow.SetFollowTarget(cameraTarget);
     }
 
     private void LateUpdate()
     {
-        ApplyRotation();
-    }
-
-    private void ApplyRotation()
-    {
-        yaw += lookInput.x * mouseSensitivity;
-        pitch -= lookInput.y * mouseSensitivity;
-
-        pitch = Mathf.Clamp(pitch, -pitchClamp, pitchClamp);
-
-        // Apply player yaw rotation (Y-axis)
-        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
-
-        // Apply camera pitch (X-axis)
-        Transform currentTarget = isThirdPerson ? thirdPersonTarget : firstPersonTarget;
-        currentTarget.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+        cameraRotation.ApplyRotation();
     }
 
     private void ToggleView()
@@ -67,11 +56,11 @@ public class PlayerRotation : MonoBehaviour
 
     private void SetViewMode(bool thirdPerson)
     {
-        cameraFollow.SetFollowTarget(thirdPerson ? thirdPersonTarget : firstPersonTarget);
+        cameraRotation = thirdPerson ? new ThirdPersonCameraRotation(context) : new FirstPersonCameraRotation(context);
     }
 
-    private void OnRotatePerformed(InputAction.CallbackContext ctx) => lookInput = ctx.ReadValue<Vector2>();
-    private void OnRotateCanceled(InputAction.CallbackContext ctx) => lookInput = Vector2.zero;
+    private void OnRotatePerformed(InputAction.CallbackContext ctx) => cameraRotation.PassInput(ctx.ReadValue<Vector2>() * mouseSensitivity);
+    private void OnRotateCanceled(InputAction.CallbackContext ctx) => cameraRotation.PassInput(Vector2.zero);
 
     private void SubscribeToInputActions()
     {

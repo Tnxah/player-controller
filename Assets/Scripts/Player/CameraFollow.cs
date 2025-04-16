@@ -3,7 +3,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     [Header("Smoothing")]
-    [SerializeField] private float positionSmoothing = 10f;
+    [SerializeField] private float positionSmoothing = 15f;
     [SerializeField] private float rotationSmoothing = 15f;
 
     [SerializeField] private Transform followTarget;
