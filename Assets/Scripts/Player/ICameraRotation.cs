@@ -2,8 +2,7 @@ using UnityEngine;
 
 public interface ICameraRotation
 {
-    public abstract void PassInput(Vector2 input);
-    public abstract void ApplyRotation();
+    public abstract void Tick(Vector2 input);
 }
 
 public class CameraRotationContext

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -10,7 +10,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float groundAcceleration = 60f;
     [SerializeField] private float airSpeed = 3f;
     [SerializeField] private float airAcceleration = 30f;
+
+    [Header("Jump")]
     [SerializeField] private float jumpForce = 6f;
+    
     [SerializeField] private float inputDeadZone = 0.1f;
 
     [Header("Damping Settings")]
@@ -20,6 +23,10 @@ public class PlayerMovement : MonoBehaviour
     [Header("Deceleration Settings")]
     [SerializeField] private float decelerationForce = 10f;
 
+    [Header("Turning (3rd?person)")]
+    [SerializeField] private Transform cameraTransform;  // active camera rig target
+    [SerializeField] private float turnSpeed = 720f; // deg/sec
+
     [Header("Ground Detection")]
     [SerializeField] private float groundCheckDistance = 0.1f;
     [SerializeField] private LayerMask groundMask;
@@ -27,23 +34,27 @@ public class PlayerMovement : MonoBehaviour
     [Header("Body")]
     [SerializeField] private CapsuleCollider bodyCollider;
 
-    private Vector2 moveInput;
     private Vector3 moveDirection;
     private bool jumpPressed;
 
-    private bool isGrounded;
+    private ViewModeState viewModeState;     // set from bootstrap
+
     private Rigidbody rb;
     private PlayerControls inputActions;
+
+    private Vector2 moveInput;
+    private bool isGrounded;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        viewModeState = GetComponent<ViewModeState>();
         rb.freezeRotation = true;
     }
 
-    public void Initialize(PlayerControls inputActions)
+    public void Initialize(PlayerControls input)
     {
-        this.inputActions = inputActions;
+        inputActions = input;
         SubscribeToInputActions();
     }
 
@@ -65,6 +76,27 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMovement()
     {
+        Vector3 desiredDir;
+
+        if (viewModeState.Current == ViewMode.ThirdPerson)
+        {
+            // camera‑relative movement
+            Vector3 camFwd = cameraTransform.forward; camFwd.y = 0; camFwd.Normalize();
+            Vector3 camRight = cameraTransform.right; camRight.y = 0; camRight.Normalize();
+            desiredDir = (camRight * moveInput.x + camFwd * moveInput.y).normalized;
+
+            // smooth‑rotate player towards motion
+            if (desiredDir.sqrMagnitude > 0.0001f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(desiredDir, Vector3.up);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.fixedDeltaTime);
+            }
+        }
+        else // First‑person: use player local axes
+        {
+            desiredDir = (transform.right * moveInput.x + transform.forward * moveInput.y).normalized;
+        }
+
         if (moveInput.magnitude <= inputDeadZone && rb.linearVelocity.z <= inputDeadZone && rb.linearVelocity.x <= inputDeadZone)
             return;
 

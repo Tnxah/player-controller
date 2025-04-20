@@ -7,6 +7,7 @@ public class PlayerControlManager : MonoBehaviour
     [SerializeField] private PlayerRotation PlayerRotation;
     [SerializeField] private PlayerMovement PlayerMovement;
     [SerializeField] private PlayerInteraction PlayerInteraction;
+    [SerializeField] private ViewModeState ViewModeState;
 
     private void Awake()
     {
@@ -15,6 +16,7 @@ public class PlayerControlManager : MonoBehaviour
         PlayerMovement.Initialize(PlayerControls);
         PlayerRotation.Initialize(PlayerControls);
         PlayerInteraction.Initialize(PlayerControls);
+        ViewModeState.Initialize(PlayerControls);
     }
 
     private void OnEnable()

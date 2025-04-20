@@ -1,14 +1,17 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.Rendering.STP;
 
 [RequireComponent(typeof(PlayerControlManager))]
 public class PlayerRotation : MonoBehaviour
 {
-    private ICameraRotation cameraRotation;
+    private ICameraRotation cameraRotationStrategy;
 
     [Header("Rotation Settings")]
-    [SerializeField] private float mouseSensitivity = 1f;
+    [SerializeField] private float sensitivityX = 1f;
+    [SerializeField] private float sensitivityY = 1f;
 
     [Header("View Targets")]
     [SerializeField] private Transform firstPersonTargetPosition;
@@ -18,64 +21,69 @@ public class PlayerRotation : MonoBehaviour
     [Header("Camera")]
     [SerializeField] private CameraFollow cameraFollow;
 
-    private CameraRotationContext context;
+
+    [SerializeField] private RotationConfig config;
+    private CameraRigReference rig;
+
+
     private PlayerControls inputActions;
     private Vector2 lookInput;
-    private float pitch;
-    private float yaw;
 
-    private bool isThirdPerson; // default to FP
 
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        rig.Player = transform;
+        rig.Target = cameraTarget;
     }
 
     public void Initialize(PlayerControls inputActions)
     {
         this.inputActions = inputActions;
 
-        context = new CameraRotationContext(cameraTarget, transform, firstPersonTargetPosition, thirdPersonTargetPosition);
-
         SubscribeToInputActions();
-        SetViewMode(isThirdPerson); // Set initial mode
         cameraFollow.SetFollowTarget(cameraTarget);
     }
 
     private void LateUpdate()
     {
-        cameraRotation.ApplyRotation();
+        if(cameraRotationStrategy != null)
+            cameraRotationStrategy.Tick(lookInput);
     }
 
-    private void ToggleView()
+    private void SwitchMode(ViewMode mode)
     {
-        isThirdPerson = !isThirdPerson;
-        SetViewMode(isThirdPerson);
+        print(mode);
+        Transform anchor = mode == ViewMode.FirstPerson ? firstPersonTargetPosition : thirdPersonTargetPosition;
+
+        cameraRotationStrategy = mode switch
+        {
+            ViewMode.FirstPerson => new FirstPersonCameraRotation(rig, config, anchor),
+            ViewMode.ThirdPerson => new ThirdPersonCameraRotation(rig, config, anchor),
+            _ => throw new NotImplementedException()
+        };
     }
 
-    private void SetViewMode(bool thirdPerson)
-    {
-        cameraRotation = thirdPerson ? new ThirdPersonCameraRotation(context) : new FirstPersonCameraRotation(context);
-    }
-
-    private void OnRotatePerformed(InputAction.CallbackContext ctx) => cameraRotation.PassInput(ctx.ReadValue<Vector2>() * mouseSensitivity);
-    private void OnRotateCanceled(InputAction.CallbackContext ctx) => cameraRotation.PassInput(Vector2.zero);
+    private void OnRotatePerformed(InputAction.CallbackContext ctx) => lookInput = ctx.ReadValue<Vector2>() * new Vector2(sensitivityX, sensitivityY);
+    private void OnRotateCanceled(InputAction.CallbackContext ctx) => lookInput = Vector2.zero;
 
     private void SubscribeToInputActions()
     {
         inputActions.Player.Rotate.performed += OnRotatePerformed;
         inputActions.Player.Rotate.canceled += OnRotateCanceled;
-
-        inputActions.Player.ToggleView.performed += ctx => ToggleView();
     }
 
     private void UnsubscribeFromInputActions()
     {
         inputActions.Player.Rotate.performed -= OnRotatePerformed;
         inputActions.Player.Rotate.canceled -= OnRotateCanceled;
+    }
 
-        inputActions.Player.ToggleView.performed -= ctx => ToggleView();
+    private void OnEnable()
+    {
+        EventBus.Subscribe<ViewMode>(SwitchMode);
     }
 
     private void OnDisable()

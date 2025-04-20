@@ -227,6 +227,7 @@ GameObject:
   - component: {fileID: 5675083398657952827}
   - component: {fileID: 103737000526146599}
   - component: {fileID: 7517754830343941463}
+  - component: {fileID: 7384575039344154269}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -268,6 +269,7 @@ MonoBehaviour:
   PlayerRotation: {fileID: 3872148537499883438}
   PlayerMovement: {fileID: 7613802831090826487}
   PlayerInteraction: {fileID: 79135701028740585}
+  ViewModeState: {fileID: 7384575039344154269}
 --- !u!114 &79135701028740585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,11 +296,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 444577fa97290d748bdab37357d67903, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 1
+  sensitivityX: 1
+  sensitivityY: 1
   firstPersonTargetPosition: {fileID: 3326958587764083237}
   thirdPersonTargetPosition: {fileID: 2392311656201674129}
   cameraTarget: {fileID: 1883571221780794730}
   cameraFollow: {fileID: 0}
+  config: {fileID: 11400000, guid: 38495a437f4c75740a23666b73bfbf0c, type: 2}
 --- !u!114 &7613802831090826487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,6 +324,8 @@ MonoBehaviour:
   groundDamping: 7
   airDamping: 0
   decelerationForce: 10
+  cameraTransform: {fileID: 2392311656201674129}
+  turnSpeed: 720
   groundCheckDistance: 0.1
   groundMask:
     serializedVersion: 2
@@ -388,3 +394,16 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7384575039344154269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8778380709325363910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48cfe67aa09e30a4bb34170a63a000f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startMode: 0

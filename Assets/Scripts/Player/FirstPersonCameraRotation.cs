@@ -1,37 +1,21 @@
 using UnityEngine;
 
-public class FirstPersonCameraRotation : ICameraRotation
+public class FirstPersonCameraRotation : BaseCameraRotation
 {
-    private Transform target;
-    private Transform player;
-    private Vector2 input;
-
     private float pitch;
     private float yaw;
-    private const float pitchClamp = 90f;
 
-    public FirstPersonCameraRotation (CameraRotationContext context)
-    {
-        this.target = context.CameraTarget;
-        this.player = context.Player;
+    public FirstPersonCameraRotation(CameraRigReference rig, RotationConfig cfg, Transform anchor)
+        : base(rig, cfg, anchor) { }
 
-        target.position = context.firstPersonTargetPosition.position;
-        target.localRotation = context.firstPersonTargetPosition.localRotation;
-    }
-
-    public void ApplyRotation()
+    public override void Tick(Vector2 input)
     {
         yaw += input.x;
         pitch -= input.y;
 
-        pitch = Mathf.Clamp(pitch, -pitchClamp, pitchClamp);
+        pitch = Mathf.Clamp(pitch, -cfg.yawClamp, cfg.yawClamp);
 
-        player.rotation = Quaternion.Euler(0f, yaw, 0f);
-        target.localRotation = Quaternion.Euler(pitch, 0f, 0f);
-    }
-
-    public void PassInput(Vector2 input)
-    {
-        this.input = input;
+        rig.Player.rotation = Quaternion.Euler(0f, yaw, 0f);
+        rig.Target.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
 }

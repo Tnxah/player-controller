@@ -1,30 +1,14 @@
 using UnityEngine;
 
-public class ThirdPersonCameraRotation : ICameraRotation
+public class ThirdPersonCameraRotation : BaseCameraRotation
 {
-    private Transform target;
-    private Transform player;
-    private Vector2 input;
+    public ThirdPersonCameraRotation(CameraRigReference rig, RotationConfig cfg, Transform anchor)
+        : base(rig, cfg, anchor) { }
 
-    public ThirdPersonCameraRotation(CameraRotationContext context)
+    public override void Tick(Vector2 input)
     {
-        this.target = context.CameraTarget;
-        this.player = context.Player;
-
-        target.position = context.thirdPersonTargetPosition.position;
-        target.localRotation = context.thirdPersonTargetPosition.localRotation;
-    }
-
-    public void ApplyRotation()
-    {
-        target.RotateAround(player.position, Vector3.up, input.x);
-        target.RotateAround(player.position, target.right, -input.y);
-
-        target.LookAt(player);
-    }
-
-    public void PassInput(Vector2 input)
-    {
-        this.input = input;
+        rig.Target.RotateAround(rig.Player.position, Vector3.up, input.x);
+        rig.Target.RotateAround(rig.Player.position, rig.Target.right, -input.y);
+        rig.Target.LookAt(rig.Player);
     }
 }
