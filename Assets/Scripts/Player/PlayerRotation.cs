@@ -1,8 +1,6 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.STP;
 
 [RequireComponent(typeof(PlayerControlManager))]
 public class PlayerRotation : MonoBehaviour
@@ -13,18 +11,8 @@ public class PlayerRotation : MonoBehaviour
     [SerializeField] private float sensitivityX = 1f;
     [SerializeField] private float sensitivityY = 1f;
 
-    [Header("View Targets")]
-    [SerializeField] private Transform firstPersonTargetPosition;
-    [SerializeField] private Transform thirdPersonTargetPosition;
-    [SerializeField] private Transform cameraTarget;
-
     [Header("Camera")]
     [SerializeField] private CameraFollow cameraFollow;
-
-
-    [SerializeField] private RotationConfig config;
-    private CameraRigReference rig;
-
 
     private PlayerControls inputActions;
     private Vector2 lookInput;
@@ -34,9 +22,6 @@ public class PlayerRotation : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        rig.Player = transform;
-        rig.Target = cameraTarget;
     }
 
     public void Initialize(PlayerControls inputActions)
@@ -44,7 +29,6 @@ public class PlayerRotation : MonoBehaviour
         this.inputActions = inputActions;
 
         SubscribeToInputActions();
-        cameraFollow.SetFollowTarget(cameraTarget);
     }
 
     private void LateUpdate()
@@ -53,17 +37,10 @@ public class PlayerRotation : MonoBehaviour
             cameraRotationStrategy.Tick(lookInput);
     }
 
-    private void SwitchMode(ViewMode mode)
+    private void SwitchMode(BaseCameraRotation cameraRotation)
     {
-        print(mode);
-        Transform anchor = mode == ViewMode.FirstPerson ? firstPersonTargetPosition : thirdPersonTargetPosition;
-
-        cameraRotationStrategy = mode switch
-        {
-            ViewMode.FirstPerson => new FirstPersonCameraRotation(rig, config, anchor),
-            ViewMode.ThirdPerson => new ThirdPersonCameraRotation(rig, config, anchor),
-            _ => throw new NotImplementedException()
-        };
+        print(cameraRotation.name);
+        cameraRotationStrategy = cameraRotation;
     }
 
     private void OnRotatePerformed(InputAction.CallbackContext ctx) => lookInput = ctx.ReadValue<Vector2>() * new Vector2(sensitivityX, sensitivityY);
@@ -83,7 +60,7 @@ public class PlayerRotation : MonoBehaviour
 
     private void OnEnable()
     {
-        EventBus.Subscribe<ViewMode>(SwitchMode);
+        EventBus.Subscribe<BaseCameraRotation>(SwitchMode);
     }
 
     private void OnDisable()

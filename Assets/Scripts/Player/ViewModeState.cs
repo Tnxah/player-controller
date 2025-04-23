@@ -1,18 +1,18 @@
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ViewModeState : MonoBehaviour
 {
-    [SerializeField] private ViewMode startMode = ViewMode.FirstPerson;
+    [SerializeField] private int currentViewModeNumber = 0;
 
-    private ViewMode _current;
-    public ViewMode Current => _current;
+    private List<BaseCameraRotation> cameraRotationBehaviours;
 
     private PlayerControls inputActions;
 
     private void Awake()
     {
-        _current = startMode;
+        cameraRotationBehaviours = GetComponents<BaseCameraRotation>().ToList();
     }
 
     public void Initialize(PlayerControls input)
@@ -25,7 +25,7 @@ public class ViewModeState : MonoBehaviour
 
     private void Toggle()
     {
-        _current = _current == ViewMode.FirstPerson ? ViewMode.ThirdPerson : ViewMode.FirstPerson;
-        EventBus.Publish(_current);
+        EventBus.Publish(cameraRotationBehaviours[currentViewModeNumber++]);
+        currentViewModeNumber = currentViewModeNumber == cameraRotationBehaviours.Count ? 0 : currentViewModeNumber;
     }
 }

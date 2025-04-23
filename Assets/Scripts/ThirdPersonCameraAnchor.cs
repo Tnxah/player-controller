@@ -4,19 +4,14 @@ public class ThirdPersonCameraAnchor : MonoBehaviour
 {
     public Transform player;
 
-    [SerializeField] private Transform cameraTarget;
-
-    public Transform Initialize(Transform player)
-    {
-        this.player = player;
-        return cameraTarget;
-    }
-
     private void FixedUpdate()
     {
-        if (player != null)
+        if (player != null && player.transform.position != transform.position)
         {
-            transform.position = player.position;
+            if (transform.position != player.position)
+            {
+                transform.position = Vector3.Lerp(transform.position, player.position, Time.fixedDeltaTime * 80);
+            }
         }
     }
 }

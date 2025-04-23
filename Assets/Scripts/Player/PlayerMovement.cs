@@ -24,7 +24,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float decelerationForce = 10f;
 
     [Header("Turning (3rd?person)")]
-    [SerializeField] private Transform cameraTransform;  // active camera rig target
     [SerializeField] private float turnSpeed = 720f; // deg/sec
 
     [Header("Ground Detection")]
@@ -76,26 +75,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMovement()
     {
-        Vector3 desiredDir;
-
-        if (viewModeState.Current == ViewMode.ThirdPerson)
-        {
+        //if (viewModeState.Current == ViewMode.ThirdPerson)
+        //{
             // camera‑relative movement
-            Vector3 camFwd = cameraTransform.forward; camFwd.y = 0; camFwd.Normalize();
-            Vector3 camRight = cameraTransform.right; camRight.y = 0; camRight.Normalize();
-            desiredDir = (camRight * moveInput.x + camFwd * moveInput.y).normalized;
+            Vector3 camFwd = Camera.main.transform.forward; camFwd.y = 0; camFwd.Normalize();
+            Vector3 camRight = Camera.main.transform.right; camRight.y = 0; camRight.Normalize();
+            moveDirection = (camRight * moveInput.x + camFwd * moveInput.y).normalized;
 
             // smooth‑rotate player towards motion
-            if (desiredDir.sqrMagnitude > 0.0001f)
+            if (moveDirection.sqrMagnitude > 0.0001f)
             {
-                Quaternion targetRot = Quaternion.LookRotation(desiredDir, Vector3.up);
+                Quaternion targetRot = Quaternion.LookRotation(moveDirection, Vector3.up);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.fixedDeltaTime);
             }
-        }
-        else // First‑person: use player local axes
-        {
-            desiredDir = (transform.right * moveInput.x + transform.forward * moveInput.y).normalized;
-        }
+        //}
+        //else // First‑person: use player local axes
+        //{
+        //    moveDirection = (transform.right * moveInput.x + transform.forward * moveInput.y).normalized;
+        //}
 
         if (moveInput.magnitude <= inputDeadZone && rb.linearVelocity.z <= inputDeadZone && rb.linearVelocity.x <= inputDeadZone)
             return;
@@ -104,16 +101,16 @@ public class PlayerMovement : MonoBehaviour
         var acceleration = isGrounded ? groundAcceleration : airAcceleration;
         var speed = isGrounded ? walkSpeed : airSpeed;
 
-        moveDirection = (transform.right * moveInput.x + transform.forward * moveInput.y).normalized;
+        //moveDirection = (transform.right * moveInput.x + transform.forward * moveInput.y).normalized;
 
         if (horizontalVelocity.magnitude > speed)
         {
             acceleration = 0f;
         }
 
-        if (moveDirection.sqrMagnitude > 0.01f)
+        if (this.moveDirection.sqrMagnitude > 0.01f)
         {
-            rb.AddForce(moveDirection * acceleration, ForceMode.Acceleration); //ForceMode.Force to make it dependent on the rb mass
+            rb.AddForce(this.moveDirection * acceleration, ForceMode.Acceleration); //ForceMode.Force to make it dependent on the rb mass
         }
         else 
         {

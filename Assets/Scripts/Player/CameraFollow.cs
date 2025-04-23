@@ -6,33 +6,40 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private float positionSmoothing = 15f;
     [SerializeField] private float rotationSmoothing = 15f;
 
-    [SerializeField] private Transform followTarget;
+    private Transform followTarget;
     private Vector3 velocity = Vector3.zero;
 
-    public void SetFollowTarget(Transform target)
+    private void Awake()
     {
-        followTarget = target;
+        EventBus.Subscribe<BaseCameraRotation>(SetFollowTarget);
+    }
+
+    public void SetFollowTarget(BaseCameraRotation cameraRotation)
+    {
+        followTarget = cameraRotation.Target;
     }
 
     private void LateUpdate()
     {
         if (followTarget == null) return;
 
-        // Smooth position
-        transform.position = Vector3.SmoothDamp(
-            transform.position,
-            followTarget.position,
-            ref velocity,
-            1f / positionSmoothing,
-            Mathf.Infinity,
-            Time.deltaTime
-        );
+        if (transform.position != followTarget.position)
+            // Smooth position
+            transform.position = Vector3.SmoothDamp(
+                transform.position,
+                followTarget.position,
+                ref velocity,
+                1f / positionSmoothing,
+                Mathf.Infinity,
+                Time.deltaTime
+            );
 
-        // Smooth rotation
-        transform.rotation = Quaternion.Slerp(
+        if (transform.rotation != followTarget.rotation)
+            // Smooth rotation
+            transform.rotation = Quaternion.Slerp(
             transform.rotation,
             followTarget.rotation,
             Time.deltaTime * rotationSmoothing
-        );
+            );
     }
 }

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a9ad713f2e7bbc43837c64707549efd, type: 3}
   m_Name: RotationConfig
   m_EditorClassIdentifier: 
-  yawClamp: 90
+  yawClamp: 50
   turnSpeed: 10
