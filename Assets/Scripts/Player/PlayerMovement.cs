@@ -81,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
             Vector3 camFwd = Camera.main.transform.forward; camFwd.y = 0; camFwd.Normalize();
             Vector3 camRight = Camera.main.transform.right; camRight.y = 0; camRight.Normalize();
             moveDirection = (camRight * moveInput.x + camFwd * moveInput.y).normalized;
-
+        print($"Move direction - {moveDirection}, Magnitude - {moveDirection.sqrMagnitude}, SqrMagnitude - {moveDirection.sqrMagnitude}");
         // smooth‑rotate player towards motion
         //if (moveDirection.sqrMagnitude > 0.0001f)
         //{

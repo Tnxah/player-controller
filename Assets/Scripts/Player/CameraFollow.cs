@@ -11,7 +11,6 @@ public class CameraFollow : MonoBehaviour
 
     private void Awake()
     {
-        print("Awake()");
         EventBus.Subscribe<BaseCameraRotation>(SetFollowTarget);
     }
 

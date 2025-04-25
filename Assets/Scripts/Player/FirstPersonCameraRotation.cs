@@ -18,12 +18,16 @@ public class FirstPersonCameraRotation : BaseCameraRotation
     {
         if (Mathf.Abs(input.y) > 0)
         {
+            pitch -= input.y;
+
             pitch = Mathf.Clamp(pitch, -cfg.yawClamp, cfg.yawClamp);
             Target.localRotation = Quaternion.Euler(pitch, 0f, 0f);
         }
         
         if (Mathf.Abs(input.x) > 0) 
-        { 
+        {
+            yaw += input.x;
+
             rb.MoveRotation(Quaternion.Euler(0f, yaw, 0f));
         }
     }
@@ -31,8 +35,5 @@ public class FirstPersonCameraRotation : BaseCameraRotation
     public override void OnInput(Vector2 input)
     {
         this.input = input;
-
-        yaw += input.x;
-        pitch -= input.y;
     }
 }
