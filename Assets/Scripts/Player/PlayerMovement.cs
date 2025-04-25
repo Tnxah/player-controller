@@ -82,12 +82,12 @@ public class PlayerMovement : MonoBehaviour
             Vector3 camRight = Camera.main.transform.right; camRight.y = 0; camRight.Normalize();
             moveDirection = (camRight * moveInput.x + camFwd * moveInput.y).normalized;
 
-            // smooth‑rotate player towards motion
-            if (moveDirection.sqrMagnitude > 0.0001f)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(moveDirection, Vector3.up);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.fixedDeltaTime);
-            }
+        // smooth‑rotate player towards motion
+        //if (moveDirection.sqrMagnitude > 0.0001f)
+        //{
+        //    Quaternion targetRot = Quaternion.LookRotation(moveDirection, Vector3.up);
+        //    transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.fixedDeltaTime);
+        //}
         //}
         //else // First‑person: use player local axes
         //{

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,17 +10,15 @@ public class PlayerRotation : MonoBehaviour
     [SerializeField] private float sensitivityX = 1f;
     [SerializeField] private float sensitivityY = 1f;
 
-    [Header("Camera")]
-    [SerializeField] private CameraFollow cameraFollow;
-
     private PlayerControls inputActions;
     private Vector2 lookInput;
-
 
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        EventBus.Subscribe<BaseCameraRotation>(SwitchMode);
     }
 
     public void Initialize(PlayerControls inputActions)
@@ -31,21 +28,14 @@ public class PlayerRotation : MonoBehaviour
         SubscribeToInputActions();
     }
 
-    private void LateUpdate()
-    {
-        if(cameraRotationStrategy != null)
-            cameraRotationStrategy.Tick(lookInput);
-    }
-
     private void SwitchMode(BaseCameraRotation cameraRotation)
     {
-        print(cameraRotation.name);
         cameraRotationStrategy = cameraRotation;
     }
 
-    private void OnRotatePerformed(InputAction.CallbackContext ctx) => lookInput = ctx.ReadValue<Vector2>() * new Vector2(sensitivityX, sensitivityY);
-    private void OnRotateCanceled(InputAction.CallbackContext ctx) => lookInput = Vector2.zero;
-
+    private void OnRotatePerformed(InputAction.CallbackContext ctx) => cameraRotationStrategy?.OnInput(ctx.ReadValue<Vector2>() * new Vector2(sensitivityX, sensitivityY));
+    private void OnRotateCanceled(InputAction.CallbackContext ctx) => cameraRotationStrategy?.OnInput(Vector2.zero);
+    
     private void SubscribeToInputActions()
     {
         inputActions.Player.Rotate.performed += OnRotatePerformed;
@@ -58,13 +48,9 @@ public class PlayerRotation : MonoBehaviour
         inputActions.Player.Rotate.canceled -= OnRotateCanceled;
     }
 
-    private void OnEnable()
-    {
-        EventBus.Subscribe<BaseCameraRotation>(SwitchMode);
-    }
-
     private void OnDisable()
     {
         UnsubscribeFromInputActions();
+        EventBus.Unsubscribe<BaseCameraRotation>(SwitchMode);
     }
 }

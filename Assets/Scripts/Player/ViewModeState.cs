@@ -15,6 +15,11 @@ public class ViewModeState : MonoBehaviour
         cameraRotationBehaviours = GetComponents<BaseCameraRotation>().ToList();
     }
 
+    private void Start()
+    {
+        Toggle();
+    }
+
     public void Initialize(PlayerControls input)
     {
         inputActions = input;
@@ -25,6 +30,7 @@ public class ViewModeState : MonoBehaviour
 
     private void Toggle()
     {
+        print("Toggle()");
         EventBus.Publish(cameraRotationBehaviours[currentViewModeNumber++]);
         currentViewModeNumber = currentViewModeNumber == cameraRotationBehaviours.Count ? 0 : currentViewModeNumber;
     }

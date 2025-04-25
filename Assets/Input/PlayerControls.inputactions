@@ -227,9 +227,9 @@
                 {
                     "name": "",
                     "id": "c9fdc7a6-8755-4669-a1ba-ae2c266a4c0e",
-                    "path": "<Mouse>/delta",
+                    "path": "<Pointer>/delta",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "ScaleVector2(x=0.05,y=0.05)",
                     "groups": "",
                     "action": "Rotate",
                     "isComposite": false,

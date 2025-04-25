@@ -3,14 +3,15 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     [Header("Smoothing")]
-    [SerializeField] private float positionSmoothing = 15f;
-    [SerializeField] private float rotationSmoothing = 15f;
+    private float positionSmoothing = 100f;
+    private float rotationSmoothing = 100f;
 
     private Transform followTarget;
     private Vector3 velocity = Vector3.zero;
 
     private void Awake()
     {
+        print("Awake()");
         EventBus.Subscribe<BaseCameraRotation>(SetFollowTarget);
     }
 
@@ -33,13 +34,20 @@ public class CameraFollow : MonoBehaviour
                 Mathf.Infinity,
                 Time.deltaTime
             );
+        //transform.position = followTarget.position;
 
         if (transform.rotation != followTarget.rotation)
-            // Smooth rotation
+            //Smooth rotation
             transform.rotation = Quaternion.Slerp(
             transform.rotation,
             followTarget.rotation,
             Time.deltaTime * rotationSmoothing
             );
+        //transform.rotation = followTarget.rotation;
+    }
+
+    private void OnDisable()
+    {
+        EventBus.Unsubscribe<BaseCameraRotation>(SetFollowTarget);
     }
 }

@@ -6,5 +6,5 @@ public abstract class BaseCameraRotation : MonoBehaviour, ICameraRotation
     [SerializeField] public Transform Target;
     [SerializeField] protected Transform Player;
 
-    public abstract void Tick(Vector2 input);
+    public abstract void OnInput(Vector2 input);
 }
