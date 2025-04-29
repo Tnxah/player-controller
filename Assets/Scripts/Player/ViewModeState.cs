@@ -13,11 +13,12 @@ public class ViewModeState : MonoBehaviour
     private void Awake()
     {
         cameraRotationBehaviours = GetComponents<BaseCameraRotation>().ToList();
+        cameraRotationBehaviours.ForEach(beh => beh.enabled = false);
     }
 
     private void Start()
     {
-        Toggle();
+        SetStartViewMode();
     }
 
     public void Initialize(PlayerControls input)
@@ -28,9 +29,20 @@ public class ViewModeState : MonoBehaviour
 
     private void OnDisable() => inputActions.Player.ToggleView.performed -= _ => Toggle();
 
+    private void SetStartViewMode()
+    {
+        EventBus.Publish(cameraRotationBehaviours[currentViewModeNumber]);
+        cameraRotationBehaviours[currentViewModeNumber].Enter();
+    }
+
     private void Toggle()
     {
-        EventBus.Publish(cameraRotationBehaviours[currentViewModeNumber++]);
-        currentViewModeNumber = currentViewModeNumber == cameraRotationBehaviours.Count ? 0 : currentViewModeNumber;
+        cameraRotationBehaviours[currentViewModeNumber].Exit();
+
+        currentViewModeNumber = currentViewModeNumber == cameraRotationBehaviours.Count - 1 ? 0 : currentViewModeNumber + 1;
+
+        EventBus.Publish(cameraRotationBehaviours[currentViewModeNumber]);
+        
+        cameraRotationBehaviours[currentViewModeNumber].Enter();
     }
 }

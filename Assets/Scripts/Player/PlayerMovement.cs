@@ -23,9 +23,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Deceleration Settings")]
     [SerializeField] private float decelerationForce = 10f;
 
-    [Header("Turning (3rd?person)")]
-    [SerializeField] private float turnSpeed = 720f; // deg/sec
-
     [Header("Ground Detection")]
     [SerializeField] private float groundCheckDistance = 0.1f;
     [SerializeField] private LayerMask groundMask;
@@ -34,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private CapsuleCollider bodyCollider;
 
     private Vector3 moveDirection;
+    private MoveDirectionEvent moveDirectionEvent;
     private bool jumpPressed;
 
     private ViewModeState viewModeState;     // set from bootstrap
@@ -49,6 +47,8 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         viewModeState = GetComponent<ViewModeState>();
         rb.freezeRotation = true;
+
+        moveDirectionEvent = new MoveDirectionEvent();
     }
 
     public void Initialize(PlayerControls input)
@@ -75,27 +75,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMovement()
     {
-        //if (viewModeState.Current == ViewMode.ThirdPerson)
-        //{
-            // camera‑relative movement
-            Vector3 camFwd = Camera.main.transform.forward; camFwd.y = 0; camFwd.Normalize();
-            Vector3 camRight = Camera.main.transform.right; camRight.y = 0; camRight.Normalize();
-            moveDirection = (camRight * moveInput.x + camFwd * moveInput.y).normalized;
-        print($"Move direction - {moveDirection}, Magnitude - {moveDirection.sqrMagnitude}, SqrMagnitude - {moveDirection.sqrMagnitude}");
-        // smooth‑rotate player towards motion
-        //if (moveDirection.sqrMagnitude > 0.0001f)
-        //{
-        //    Quaternion targetRot = Quaternion.LookRotation(moveDirection, Vector3.up);
-        //    transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, turnSpeed * Time.fixedDeltaTime);
-        //}
-        //}
-        //else // First‑person: use player local axes
-        //{
-        //    moveDirection = (transform.right * moveInput.x + transform.forward * moveInput.y).normalized;
-        //}
-
+        Vector3 camFwd = Camera.main.transform.forward; camFwd.y = 0; camFwd.Normalize();
+        Vector3 camRight = Camera.main.transform.right; camRight.y = 0; camRight.Normalize();
+        moveDirection = (camRight * moveInput.x + camFwd * moveInput.y).normalized;
+        
         if (moveInput.magnitude <= inputDeadZone && rb.linearVelocity.z <= inputDeadZone && rb.linearVelocity.x <= inputDeadZone)
             return;
+
+        if (moveDirectionEvent.MoveDirection != moveDirection)
+        {
+            moveDirectionEvent.MoveDirection = moveDirection;
+            EventBus.Publish(moveDirectionEvent);
+        }
 
         var horizontalVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         var acceleration = isGrounded ? groundAcceleration : airAcceleration;
@@ -114,7 +105,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else 
         {
-            if (horizontalVelocity.magnitude > 0.05f)
+            if (horizontalVelocity.sqrMagnitude > 0.05f)
             {
                 var decelDirection = -horizontalVelocity.normalized;
                 rb.AddForce(decelDirection * decelerationForce, ForceMode.Acceleration);
@@ -137,6 +128,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckGrounded()
     {
+        if (rb.linearVelocity.sqrMagnitude < 0.0001f)
+            return;
+
         var radius = bodyCollider.radius;
         var spherePosition = transform.position + Vector3.down * ((bodyCollider.height / 2f) - bodyCollider.radius + groundCheckDistance);
         isGrounded = Physics.CheckSphere(spherePosition, radius, groundMask);
@@ -171,5 +165,9 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.color = isGrounded ? Color.green : Color.red;
         Gizmos.DrawWireSphere(spherePosition, radius);
     }
+}
 
+public class MoveDirectionEvent
+{
+    public Vector3 MoveDirection;
 }

@@ -5,8 +5,9 @@ using System.Linq;
 public class EventBus
 {
     private static readonly Dictionary<Type, List<Delegate>> eventListeners = new Dictionary<Type, List<Delegate>>();
+    private static readonly Dictionary<Type, object> lastEvent = new Dictionary<Type, object>();
 
-    public static void Subscribe<T>(Action<T> listener)
+    public static void Subscribe<T>(Action<T> listener, bool obtainLastEvent = false)
     {
         Type eventType = typeof(T);
         if (!eventListeners.ContainsKey(eventType))
@@ -14,6 +15,11 @@ public class EventBus
             eventListeners[eventType] = new List<Delegate>();
         }
         eventListeners[eventType].Add(listener);
+
+        if (obtainLastEvent && lastEvent.ContainsKey(eventType))
+        {
+            listener((T)lastEvent[eventType]);
+        }
     }
 
     public static void Unsubscribe<T>(Action<T> listener)
@@ -36,5 +42,6 @@ public class EventBus
                 listener(eventData);
             }
         }
+        lastEvent[eventType] = eventData;
     }
 }
