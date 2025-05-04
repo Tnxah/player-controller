@@ -3,9 +3,8 @@ using UnityEngine.InputSystem;
 
 public class ThirdPersonCameraRotation : BaseCameraRotation
 {
-    private Vector2 input;
     private Vector3 moveDirection;
-
+    private float pitch;
     private Rigidbody rb;
 
     private void Awake()
@@ -25,7 +24,14 @@ public class ThirdPersonCameraRotation : BaseCameraRotation
         if (Mathf.Abs(input.x) > 0)
             Target.RotateAround(Player.position, Vector3.up, input.x * deviceMultiplayer);
         if (Mathf.Abs(input.y) > 0)
-            Target.RotateAround(Player.position, Target.right, -input.y * deviceMultiplayer);
+        {
+            float wantedPitch = Mathf.Clamp(pitch + (-input.y), -cfg.yawClamp, cfg.yawClamp);
+
+            float allowedDelta = wantedPitch - pitch;
+            pitch = wantedPitch;
+
+            Target.RotateAround(Player.position, Target.right, allowedDelta * deviceMultiplayer);
+        }
         if(input.magnitude != 0)
             Target.LookAt(Player);
     }

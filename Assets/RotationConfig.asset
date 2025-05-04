@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: RotationConfig
   m_EditorClassIdentifier: 
   yawClamp: 85
-  turnSpeed: 10
+  turnSpeed: 500

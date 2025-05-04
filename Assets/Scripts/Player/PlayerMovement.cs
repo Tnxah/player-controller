@@ -41,6 +41,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 moveInput;
     private bool isGrounded;
+    private Collider[] _groundHits = new Collider[1];
 
     private void Awake()
     {
@@ -133,7 +134,8 @@ public class PlayerMovement : MonoBehaviour
 
         var radius = bodyCollider.radius;
         var spherePosition = transform.position + Vector3.down * ((bodyCollider.height / 2f) - bodyCollider.radius + groundCheckDistance);
-        isGrounded = Physics.CheckSphere(spherePosition, radius, groundMask);
+
+        isGrounded = Physics.OverlapSphereNonAlloc(spherePosition, radius, _groundHits, groundMask) > 0;
     }
 
     private void SubscribeToInputActions()

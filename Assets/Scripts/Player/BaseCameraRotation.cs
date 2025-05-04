@@ -7,6 +7,8 @@ public abstract class BaseCameraRotation : MonoBehaviour, ICameraRotation
     [SerializeField] public Transform Target;
     [SerializeField] protected Transform Player;
 
+    protected Vector2 input;
+
     protected InputDevice _currentDevice;
 
     public abstract void OnInput(Vector2 input);
@@ -27,6 +29,7 @@ public abstract class BaseCameraRotation : MonoBehaviour, ICameraRotation
     {
         EventBus.Unsubscribe<InputDevice>(SetDevice);
         this.enabled = false;
+        input = Vector2.zero;
         print("Exit");
     }
 }

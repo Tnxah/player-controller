@@ -8,8 +8,6 @@ public class FirstPersonCameraRotation : BaseCameraRotation
 
     private Rigidbody rb;
 
-    private Vector2 input;
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
