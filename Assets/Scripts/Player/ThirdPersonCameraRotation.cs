@@ -7,9 +7,19 @@ public class ThirdPersonCameraRotation : BaseCameraRotation
     private float pitch;
     private Rigidbody rb;
 
+    private Transform lockTarget;
+    private bool isTargetLocked;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        EventBus.Subscribe<LockOnTargetEvent>(SetTarget);
+    }
+
+    private void SetTarget(LockOnTargetEvent evt)
+    {
+        lockTarget = evt.target;
+        isTargetLocked = lockTarget  != null;
     }
 
     public override void OnInput(Vector2 input)
@@ -19,22 +29,44 @@ public class ThirdPersonCameraRotation : BaseCameraRotation
 
     private void Update()
     {
-        var deviceMultiplayer = _currentDevice is Gamepad ? Time.deltaTime : 1;
-
-        if (Mathf.Abs(input.x) > 0)
-            Target.RotateAround(Player.position, Vector3.up, input.x * deviceMultiplayer);
-        if (Mathf.Abs(input.y) > 0)
+        if (isTargetLocked && lockTarget)
         {
-            float wantedPitch = Mathf.Clamp(pitch + (-input.y), -cfg.yawClamp, cfg.yawClamp);
+            Vector3 currentDir = Target.position - Player.position;
+            Vector3 desiredDir = -(lockTarget.position - Player.position);
 
-            float allowedDelta = wantedPitch - pitch;
-            pitch = wantedPitch;
+            Vector3 projCurrent = Vector3.ProjectOnPlane(currentDir, Vector3.up);
+            Vector3 projDesired = Vector3.ProjectOnPlane(desiredDir, Vector3.up);
 
-            Target.RotateAround(Player.position, Target.right, allowedDelta * deviceMultiplayer);
+            var angle = Vector3.SignedAngle(projCurrent, projDesired, Vector3.up);
+            
+            if (angle != 0)
+                Target.RotateAround(Player.position, Vector3.up, angle * 10f * Time.deltaTime);
+
+            Target.LookAt(lockTarget, Vector3.up);
         }
-        if(input.magnitude != 0)
-            Target.LookAt(Player);
+        else
+        {
+            var deviceMultiplayer = _currentDevice is Gamepad ? Time.deltaTime : 1;
+
+            if (Mathf.Abs(input.x) > 0)
+                Target.RotateAround(Player.position, Vector3.up, input.x * deviceMultiplayer);
+
+            if (Mathf.Abs(input.y) > 0)
+            {
+                float wantedPitch = Mathf.Clamp(pitch - input.y, -cfg.yawClamp, cfg.yawClamp);
+
+                float allowedDelta = wantedPitch - pitch;
+                pitch = wantedPitch;
+
+                Target.RotateAround(Player.position, Target.right, allowedDelta * deviceMultiplayer);
+            }
+
+            if(input.magnitude != 0)
+                Target.LookAt(Player);
+        }
     }
+
+
 
     private void FixedUpdate()
     {

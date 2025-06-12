@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerControlManager))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : PlayerComponentBase
 {
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeed = 6.5f;
@@ -37,7 +37,6 @@ public class PlayerMovement : MonoBehaviour
     private ViewModeState viewModeState;     // set from bootstrap
 
     private Rigidbody rb;
-    private PlayerControls inputActions;
 
     private Vector2 moveInput;
     private bool isGrounded;
@@ -50,12 +49,6 @@ public class PlayerMovement : MonoBehaviour
         rb.freezeRotation = true;
 
         moveDirectionEvent = new MoveDirectionEvent();
-    }
-
-    public void Initialize(PlayerControls input)
-    {
-        inputActions = input;
-        SubscribeToInputActions();
     }
 
     private void Update()
@@ -138,23 +131,18 @@ public class PlayerMovement : MonoBehaviour
         isGrounded = Physics.OverlapSphereNonAlloc(spherePosition, radius, _groundHits, groundMask) > 0;
     }
 
-    private void SubscribeToInputActions()
+    protected override void SubscribeToInputActions()
     {
         inputActions.Player.Move.performed += OnMovePerformed;
         inputActions.Player.Move.canceled += OnMoveCanceled;
         inputActions.Player.Jump.performed += OnJumpPerformed;
     }
 
-    private void UnsubscribeFromInputActions()
+    protected override void UnsubscribeFromInputActions()
     {
         inputActions.Player.Move.performed -= OnMovePerformed;
         inputActions.Player.Move.canceled -= OnMoveCanceled;
         inputActions.Player.Jump.performed -= OnJumpPerformed;
-    }
-
-    private void OnDisable()
-    {
-        UnsubscribeFromInputActions();
     }
 
     private void OnDrawGizmosSelected()

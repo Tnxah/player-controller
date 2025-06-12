@@ -8,19 +8,19 @@ public class PlayerControlManager : MonoBehaviour
 
     private PlayerControls PlayerControls;
 
-    [SerializeField] private PlayerRotation PlayerRotation;
-    [SerializeField] private PlayerMovement PlayerMovement;
-    [SerializeField] private PlayerInteraction PlayerInteraction;
-    [SerializeField] private ViewModeState ViewModeState;
-
     private void Awake()
     {
         PlayerControls = new PlayerControls();
 
-        PlayerMovement.Initialize(PlayerControls);
-        PlayerRotation.Initialize(PlayerControls);
-        PlayerInteraction.Initialize(PlayerControls);
-        ViewModeState.Initialize(PlayerControls);
+        InitailizePlayerComponents();
+    }
+
+    private void InitailizePlayerComponents()
+    {
+        var playerComponents = GetComponents<PlayerComponentBase>();
+        
+        foreach (var pc in playerComponents)
+            pc.Initialize(PlayerControls);
     }
 
     private void OnInputEvent(InputEventPtr eventPtr, InputDevice inputDevice)

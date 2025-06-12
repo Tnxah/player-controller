@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class PlayerInteraction : MonoBehaviour
+public class PlayerInteraction : PlayerComponentBase
 {
-    private PlayerControls inputActions;
-
     private IInteractor interactor;
     private IInteractable interactable;
     private InteractorContext interactorContext;
@@ -15,14 +13,10 @@ public class PlayerInteraction : MonoBehaviour
     [Header("Interaction Detection settings")]
     [SerializeField] private float detectionDelaySeconds = 0.1f;
 
-    public void Initialize(PlayerControls inputActions)
-    {
-        this.inputActions = inputActions;
+    private void Awake()
+    {   
         interactionDetector = gameObject.AddComponent<InteractionDetector>();
-
         InitializeRaycastInteractor();
-
-        SubscribeToInputActions();
     }
 
     private void InitializeRaycastInteractor()
@@ -53,21 +47,16 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
-    private void SubscribeToInputActions()
+    protected override void SubscribeToInputActions()
     {
         inputActions.Player.Interact.performed += ctx => Interact();
         inputActions.Player.Interact.canceled += ctx => EndInteraction();
     }
 
-    private void UnsubscribeFromInputActions()
+    protected override void UnsubscribeFromInputActions()
     {
         inputActions.Player.Interact.performed -= ctx => Interact();
         inputActions.Player.Interact.canceled -= ctx => EndInteraction();
-    }
-
-    private void OnDisable()
-    {
-        UnsubscribeFromInputActions();
     }
 }
 

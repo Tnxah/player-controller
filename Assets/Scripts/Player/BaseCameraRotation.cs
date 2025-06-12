@@ -22,7 +22,6 @@ public abstract class BaseCameraRotation : MonoBehaviour, ICameraRotation
     {
         EventBus.Subscribe<InputDevice>(SetDevice, true);
         this.enabled = true;
-        print("Enter");
     }
 
     public virtual void Exit()
@@ -30,6 +29,5 @@ public abstract class BaseCameraRotation : MonoBehaviour, ICameraRotation
         EventBus.Unsubscribe<InputDevice>(SetDevice);
         this.enabled = false;
         input = Vector2.zero;
-        print("Exit");
     }
 }

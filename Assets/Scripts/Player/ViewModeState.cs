@@ -2,13 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ViewModeState : MonoBehaviour
+public class ViewModeState : PlayerComponentBase
 {
     [SerializeField] private int currentViewModeNumber = 0;
 
     private List<BaseCameraRotation> cameraRotationBehaviours;
-
-    private PlayerControls inputActions;
 
     private void Awake()
     {
@@ -19,12 +17,6 @@ public class ViewModeState : MonoBehaviour
     private void Start()
     {
         SetStartViewMode();
-    }
-
-    public void Initialize(PlayerControls input)
-    {
-        inputActions = input;
-        inputActions.Player.ToggleView.performed += _ => Toggle();
     }
 
     private void OnDisable() => inputActions.Player.ToggleView.performed -= _ => Toggle();
@@ -44,5 +36,15 @@ public class ViewModeState : MonoBehaviour
         EventBus.Publish(cameraRotationBehaviours[currentViewModeNumber]);
         
         cameraRotationBehaviours[currentViewModeNumber].Enter();
+    }
+
+    protected override void SubscribeToInputActions()
+    {
+        inputActions.Player.ToggleView.performed += _ => Toggle();
+    }
+
+    protected override void UnsubscribeFromInputActions()
+    {
+        inputActions.Player.ToggleView.performed -= _ => Toggle();
     }
 }
